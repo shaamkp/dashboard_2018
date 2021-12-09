@@ -8,23 +8,16 @@ def user_login(request):
 
         username = request.POST.get('username')
         password = request.POST.get('password')
-
         user = authenticate(username=username, password=password)
-
-
         if user is not None:
             request.session["username"] = username
             return  redirect("/")
 
-    
     return render(request, "registration/login.html")
 
 
 def user_logout(request):
     if "username" in request.session:
         del request.session["username"]
+        
     return redirect('/')
-
-   
-         
-    

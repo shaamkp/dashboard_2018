@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -13,13 +14,13 @@
 	http://www.tooplate.com/view/2108-dashboard
 
     -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <link rel="stylesheet" href="{% static 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600' %}">
     <!-- https://fonts.google.com/specimen/Open+Sans -->
-    <link rel="stylesheet" href="css/fontawesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}">
     <!-- https://fontawesome.com/ -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <!-- https://getbootstrap.com/ -->
-    <link rel="stylesheet" href="css/tooplate.css">
+    <link rel="stylesheet" href="{% static 'css/tooplate.css' %}">
 </head>
 
 <body id="reportsPage" class="bg02">
@@ -112,17 +113,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for product in products  %}
                                     <tr>
                                         <th scope="row">
                                             <input type="checkbox" aria-label="Checkbox">
                                         </th>
-                                        <td class="tm-product-name">1. In malesuada placerat (hover)</td>
-                                        <td class="text-center">145</td>
-                                        <td class="text-center">255</td>
-                                        <td>2018-10-28</td>
+                                        <td class="tm-product-name">{{product.id}}.{{product.product_name}}</td>
+                                        <td class="text-center">{{product.unit_sold}}</td>
+                                        <td class="text-center">{{product.in_sold}}</td>
+                                        <td>{{product.exp_date}}</td>
                                         <td><i class="fas fa-trash-alt tm-trash-icon"></i></td>
                                     </tr>
-                                    <tr>
+                                    {% endfor %}
+                                    <!-- <tr>
                                         <th scope="row">
                                             <input type="checkbox" aria-label="Checkbox">
                                         </th>
@@ -191,7 +194,7 @@
                                         <td class="text-center">655</td>
                                         <td>2019-03-22</td>
                                         <td><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                             </table>
                         </div>
@@ -224,11 +227,13 @@
                         <h2 class="tm-block-title d-inline-block">Product Categories</h2>
                         <table class="table table-hover table-striped mt-3">
                             <tbody>
+                                {% for category_name in categories  %}
                                 <tr>
-                                    <td>1. Cras efficitur lacus</td>
+                                    <td><a href="{% url 'product:category' %}?category={{category_name.name}}">{{category_name.id}}.{{category_name.name}}</a></td>
                                     <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
                                 </tr>
-                                <tr>
+                                {% endfor %}
+                                <!-- <tr>
                                     <td>2. Pellentesque molestie</td>
                                     <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
                                 </tr>
@@ -259,7 +264,7 @@
                                 <tr>
                                     <td>9. Donec semper</td>
                                     <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
 
@@ -277,9 +282,9 @@
             </footer>
         </div>
     </div>
-    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
     <!-- https://jquery.com/download/ -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- https://getbootstrap.com/ -->
     <script>
         $(function () {
@@ -287,6 +292,44 @@
                 window.location.href = "edit-product.html";
             });
         })
+        $('.table tbody tr td a').on('click', function(e){
+                e.preventDefault();
+                var $this = $(this);
+                var url = $this.attr("href")
+				console.log("done");
+                
+                $.ajax({
+                    type:"GET", 
+                    url:url,
+                    data: $(this).serialize(),
+                    dataType:"json",
+                    success: function(data) {
+                        var r_data = data.response_data.data
+                        let html_data = ""
+                        r_data.forEach((product_data) => {
+                            html_data += `<tr>
+                                        <th scope="row">
+                                            <input type="checkbox" aria-label="Checkbox">
+                                        </th>
+                                        <td class="tm-product-name">${product_data.product_name}</td>
+                                        <td class="text-center">${product_data.unit_sold}</td>
+                                        <td class="text-center">${product_data.in_sold}</td>
+                                        <td>${product_data.exp_date}</td>
+                                        <td><i class="fas fa-trash-alt tm-trash-icon"></i></td>
+                                    </tr>`
+								console.log(product_data);
+                        })
+                        $(".table-responsive .table tbody ").html(html_data)
+                    },
+                    failure: function(data) { 
+                        alert('Got an error dude');
+                    },
+                    processData:false,
+                    contentType:false,
+                    cache:false,
+                })
+                
+            });
     </script>
 </body>
 
