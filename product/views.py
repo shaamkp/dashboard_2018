@@ -1,8 +1,8 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http.response import JsonResponse
-
 from product.models import Category, Product
+from product.forms import ProductForm
 
 
 def product(request):
@@ -13,6 +13,7 @@ def product(request):
         "products":products,
         "categories":categories
     }
+
     return render(request, "products.html",context=context)
 
 
@@ -54,3 +55,12 @@ def category(request):
         }
 
     return JsonResponse({'response_data': response_data})
+
+
+def addProduct(request):
+    form = ProductForm(request.POST, request.FILES)
+  
+    if form.is_valid():
+        form.save()
+    else:
+        return render(request,'add-product.html', {'form' : form})
