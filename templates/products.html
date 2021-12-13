@@ -118,11 +118,11 @@
                                         <th scope="row">
                                             <input type="checkbox" aria-label="Checkbox">
                                         </th>
-                                        <td class="tm-product-name">{{product.id}}.{{product.product_name}}</td>
+                                        <td class="tm-product-name"><a href="{% url 'product:editProduct' id=product.id %}">{{product.id}}.{{product.product_name}}</a></td>
                                         <td class="text-center">{{product.unit_sold}}</td>
-                                        <td class="text-center">{{product.in_sold}}</td>
+                                        <td class="text-center">{{product.in_stock}}</td>
                                         <td>{{product.exp_date}}</td>
-                                        <td><i class="fas fa-trash-alt tm-trash-icon"></i></td>
+                                        <td><a href="{% url 'product:delProduct' pk=product.pk %}"><i class="fas fa-trash-alt tm-trash-icon"></i></a></td>
                                     </tr>
                                     {% endfor %}
                                     <!-- <tr>
@@ -229,7 +229,7 @@
                             <tbody>
                                 {% for category_name in categories  %}
                                 <tr>
-                                    <td><a href="{% url 'product:category' %}?category={{category_name.name}}">{{category_name.id}}.{{category_name.name}}</a></td>
+                                    <td><a href="{% url 'product:category' %}?category={{category_name.name}}" class="tag">{{category_name.id}}.{{category_name.name}}</a></td>
                                     <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
                                 </tr>
                                 {% endfor %}
@@ -292,7 +292,7 @@
                 window.location.href = "edit-product.html";
             });
         })
-        $('.table tbody tr td a').on('click', function(e){
+        $('.table tbody tr td a.tag').on('click', function(e){
                 e.preventDefault();
                 var $this = $(this);
                 var url = $this.attr("href")
