@@ -4,11 +4,13 @@ from django.http.response import JsonResponse
 from product.models import Category, Product
 from product.forms import ProductForm
 from product.functions import generate_form_errors
+from django.views.generic import View
+
+
 
 def product(request):
     products=Product.objects.all()
     categories=Category.objects.all()
-
     context = {
         "products":products,
         "categories":categories
@@ -77,6 +79,7 @@ def editProduct(request,id):
     form = ProductForm(instance=product)
     return render(request,"edit-product.html",{ 'product':product,'form':form })
 
+
 def updateProduct(request,id):
     product=Product.objects.get(id=id)
     form = ProductForm(request.POST, request.FILES, instance=product)
@@ -93,3 +96,20 @@ def updateProduct(request,id):
         print(generate_form_errors(form))
 
     return render(request,"edit-product.html", context = context)
+
+
+class Product_view(View):
+    def get(self,request):
+        products=Product.objects.all()
+        context ={
+            "products":products,
+        }
+        return  render(request,"product.html", context=context)
+
+    def post(self, request, *args, **kwargs):
+        if request.method=="POST":
+            product_ids=request.POST.getlist('id[]')
+            for id in product_ids:
+                product=Product.objects.get(pk=id)
+                product.delete()
+            return redirect("product:product")

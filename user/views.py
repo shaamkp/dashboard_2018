@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+from product.models import Product
 from user.models import Login
 from django.contrib.auth import authenticate
 
 
-def user_login(request):
+
+def user_login(request):  
     if request.method == "POST":
 
         username = request.POST.get('username')
@@ -20,4 +22,6 @@ def user_logout(request):
     if "username" in request.session:
         del request.session["username"]
         
-    return redirect('/')
+    return redirect('/') 
+
+
